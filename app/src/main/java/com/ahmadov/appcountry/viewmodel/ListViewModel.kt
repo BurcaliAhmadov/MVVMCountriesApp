@@ -1,16 +1,19 @@
 package com.ahmadov.appcountry.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ahmadov.appcountry.model.Country
 import com.ahmadov.appcountry.service.CountryApiService
+import com.ahmadov.appcountry.service.CountryDatabase
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.launch
 
-class ListViewModel: ViewModel() {
+class ListViewModel(application: Application): BaseViewModel(application) {
     private val countryApiService=CountryApiService()
     private val disposable=CompositeDisposable()
 
@@ -28,10 +31,8 @@ class ListViewModel: ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object :DisposableSingleObserver<List<Country>>(){
                 override fun onSuccess(t: List<Country>) {
+                    storeInSql(t)
 
-                    countries.value=t
-                    countryLoading.value=false
-                    countryError.value=false
                 }
 
                 override fun onError(e: Throwable) {
@@ -44,4 +45,26 @@ class ListViewModel: ViewModel() {
 
         )
     }
+
+    private fun showCountries(countryList:List<Country>){
+        countries.value=countryList
+        countryLoading.value=false
+        countryError.value=false
+    }
+    private fun storeInSql(list:List<Country>){
+        launch {
+            val countryDao=CountryDatabase(getApplication()).countryDao()
+            countryDao.deleteAllCounties()
+            val listLong = countryDao.insertAll(*list.toTypedArray())
+            var i=0
+            while (i<list.size){
+                list[i].uuid=listLong[i].toInt()
+                i=i+1
+            }
+            showCountries(list)
+        }
+
+
+    }
+
 }
