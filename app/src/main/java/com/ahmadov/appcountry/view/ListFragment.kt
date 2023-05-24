@@ -47,7 +47,7 @@ class ListFragment : Fragment() {
             binding.countryError.visibility=View.GONE
             binding.countryLoading.visibility=View.VISIBLE
             binding.swipeRefreshLayout.isRefreshing = false
-            viewModel.refreshData()
+            viewModel.refreshFromApi()
 
         }
         observeLiveData()

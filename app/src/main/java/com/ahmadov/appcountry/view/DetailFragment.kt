@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.ahmadov.appcountry.view.DetailFragmentArgs
 import com.ahmadov.appcountry.R
 import com.ahmadov.appcountry.databinding.FragmentDetailBinding
+import com.ahmadov.appcountry.util.downloadImageUrl
+import com.ahmadov.appcountry.util.placeHolderProgressBar
 import com.ahmadov.appcountry.viewmodel.DetailViewModel
 
 
@@ -37,7 +39,7 @@ class DetailFragment : Fragment() {
 
         }
         viewModel=ViewModelProviders.of(this).get(DetailViewModel::class.java)
-        viewModel.getDataFromRoom()
+        viewModel.getDataFromRoom(countryUuid)
         obserLiveData()
 
     }
@@ -49,6 +51,7 @@ class DetailFragment : Fragment() {
                 binding.countryCurrency.text=country.countryCurrency
                 binding.countryLanguage.text=country.countryLanguage
                 binding.countryRegion.text=country.countryRegion
+                binding.countryImage.downloadImageUrl(country.imageUrl, placeHolderProgressBar(binding.root.context))
             }
 
         })
