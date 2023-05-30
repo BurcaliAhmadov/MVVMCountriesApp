@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 
@@ -27,6 +28,8 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding=FragmentDetailBinding.inflate(LayoutInflater.from(requireContext()),container,false)
+
+
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_detail, container, false)
         return binding.root
@@ -46,6 +49,8 @@ class DetailFragment : Fragment() {
     private fun obserLiveData(){
         viewModel.countryLiveData.observe(viewLifecycleOwner, Observer {country->
             country?.let{
+
+
                 binding.countryName.text=country.countryName
                 binding.countryCapital.text=country.countryCapital
                 binding.countryCurrency.text=country.countryCurrency
